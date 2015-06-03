@@ -4,14 +4,8 @@
 <project name="pentaho-modeling-api" default="default" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
 	<description>Pentaho Modeling API</description>
 
-	<!-- Import the version information -->
-	<property file="${basedir}/version.properties" />
-
-	<!-- Define the default location of the gwt common build file -->
-	<property name="gwt.common.build.file" value="./build-res/subfloor-gwt.xml" description="This is the location of the standardized common_build.xml file" />
-
-	<!-- Import the common_build.xml file which contains all the default tasks -->
-	<import file="${gwt.common.build.file}" />
+  <!-- Import the common_build.xml file which contains all the default tasks -->
+  <import file="build-res/subfloor.xml"/>
 
 	<!--
       AS STATED ABOVE, THE ONLY TASKS THAT SHOULD EXIST IN THIS BUILD FILE ARE

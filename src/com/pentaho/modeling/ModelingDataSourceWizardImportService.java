@@ -20,7 +20,7 @@
  * explicitly covering such access.
  */
 
-package modeling;
+package com.pentaho.modeling;
 
 /**
  * Created by pminutillo on 3/12/15.

@@ -20,9 +20,9 @@
  * explicitly covering such access.
  */
 
-package modeling;
+package com.pentaho.modeling.util;
 
-import com.pentaho.analyzer.service.InlineModelingException;
+import com.pentaho.modeling.ModelingException;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -82,7 +82,7 @@ public class ModelingUtil {
       return writer.toString();
     }
     catch( Exception e ){
-      throw new InlineModelingException( e );
+      throw new ModelingException( e );
     }
   }
 }

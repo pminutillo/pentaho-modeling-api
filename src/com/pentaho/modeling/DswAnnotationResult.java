@@ -20,9 +20,8 @@
  * explicitly covering such access.
  */
 
-package modeling;
+package com.pentaho.modeling;
 
-import com.pentaho.analyzer.service.InlineModelingException;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 
@@ -75,7 +74,7 @@ public class DswAnnotationResult extends AnnotationResult {
 
     } catch ( Exception e ) {
       e.printStackTrace();
-      throw new InlineModelingException( "Error publishing DSW datasource with a modified model"  );
+      throw new ModelingException( "Error publishing DSW datasource with a modified model"  );
     }
 
     return true;

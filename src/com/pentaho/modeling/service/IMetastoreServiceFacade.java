@@ -1,7 +1,7 @@
 /*!
  * PENTAHO CORPORATION PROPRIETARY AND CONFIDENTIAL
  *
- * Copyright 2002 - 2015 Pentaho Corporation (Pentaho). All rights reserved.
+ * Copyright 2002 - 2014 Pentaho Corporation (Pentaho). All rights reserved.
  *
  * NOTICE: All information including source code contained herein is, and
  * remains the sole property of Pentaho and its licensors. The intellectual
@@ -20,22 +20,14 @@
  * explicitly covering such access.
  */
 
-package modeling;
+package com.pentaho.modeling.service;
 
 /**
- * Created by pminutillo on 3/2/15.
+ * Created by pminutillo on 12/12/14.
  */
-public class ModelingConstants {
-  public static final java.lang.String METADATA_EXT = ".xmi";
-  public static final String MONDRIAN_CATALOG_REF_PROPERTY = "MondrianCatalogRef";
-  public static final String OLAP_LOCALIZED_NAME_PROPERTY = "name";
-  public static final String OLAP_NAME_EXTENSION = "_OLAP";
-  public static final String MONDRIAN_SCHEMA_XML_ATTRIB = "MONDRIAN_SCHEMA_XML_CONTENT";
-
-  public static final String MODIFIED_DOMAIN = "com.pentaho.analyzer.service.impl.RemoteModelingServiceFacadeImpl.ModifiedDomain";
-
-  public static final String OLAP_CUBES_PROPERTY = "olap_cubes";
-  public static final String SCHEMA_NODE_NAME_ATTRIBUTE = "name";
-  public static final String SCHEMA_TAG_NAME = "Schema";
-
+public interface IMetastoreServiceFacade {
+  /**
+   *
+   */
+  public void saveAnnotationGroup( String datasourceName, String[] modelAnnotationGroup );
 }

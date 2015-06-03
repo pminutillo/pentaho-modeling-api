@@ -20,64 +20,22 @@
  * explicitly covering such access.
  */
 
-package modeling;
-
-import org.pentaho.metadata.model.Domain;
+package com.pentaho.modeling;
 
 /**
- * A class to hold fields relevant to both Mondrian and DSW data sources, as
- * well as encapsulate the logic for saving each data source type via abstract
- * save() method
- *
- * Created by pminutillo on 3/1/15.
+ * Created by pminutillo on 3/2/15.
  */
-public abstract class AnnotationResult {
-  private Domain domain;
-  private String schema;
+public class ModelingConstants {
+  public static final java.lang.String METADATA_EXT = ".xmi";
+  public static final String MONDRIAN_CATALOG_REF_PROPERTY = "MondrianCatalogRef";
+  public static final String OLAP_LOCALIZED_NAME_PROPERTY = "name";
+  public static final String OLAP_NAME_EXTENSION = "_OLAP";
+  public static final String MONDRIAN_SCHEMA_XML_ATTRIB = "MONDRIAN_SCHEMA_XML_CONTENT";
 
-  private AnnotationResult.type resultType;
+  public static final String MODIFIED_DOMAIN = "com.pentaho.analyzer.service.impl.RemoteModelingServiceFacadeImpl.ModifiedDomain";
 
-  public AnnotationResult(){
+  public static final String OLAP_CUBES_PROPERTY = "olap_cubes";
+  public static final String SCHEMA_NODE_NAME_ATTRIBUTE = "name";
+  public static final String SCHEMA_TAG_NAME = "Schema";
 
-  }
-
-  public AnnotationResult( type resultType ){
-    this.resultType = resultType;
-  }
-
-  public Domain getDomain() {
-    return domain;
-  }
-
-  public void setDomain( Domain domain ) {
-    this.domain = domain;
-  }
-
-  public String getSchema() {
-    return schema;
-  }
-
-  public void setSchema( String schema ) {
-    this.schema = schema;
-  }
-
-  public type getResultType() {
-    return resultType;
-  }
-
-  public void setResultType( type resultType ) {
-    this.resultType = resultType;
-  }
-
-  public enum type{
-    MONDRIAN,
-    DSW
-  }
-
-  /**
-   * Save method for each data source type to be implemented
-   *
-   * @return
-   */
-  public abstract boolean save( String catalogName, String newCatalogName, boolean overwrite );
 }

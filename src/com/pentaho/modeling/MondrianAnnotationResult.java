@@ -20,12 +20,12 @@
  * explicitly covering such access.
  */
 
-package modeling;
+package com.pentaho.modeling;
 
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.List;
 
+import com.pentaho.modeling.util.ModelingUtil;
+import com.pentaho.modeling.util.StringUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,7 +36,6 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.action.mondrian.MondrianCachePublisher;
 import org.pentaho.platform.plugin.action.mondrian.catalog.IMondrianCatalogService;
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
-import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCube;
 import org.pentaho.platform.plugin.services.importer.IPlatformImporter;
 import org.pentaho.platform.plugin.services.importer.RepositoryFileImportBundle;
 import org.w3c.dom.Document;
@@ -44,18 +43,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.pentaho.analyzer.content.AnalyzerLifecycleListener;
-import com.pentaho.analyzer.content.OlapConnection;
-import com.pentaho.analyzer.schema.CubeHelp;
-import com.pentaho.analyzer.service.ILocalizationService;
-import com.pentaho.analyzer.service.InlineModelingException;
-import com.pentaho.analyzer.service.impl.HelpGenerator;
-import com.pentaho.analyzer.service.impl.OlapMetaDataManager;
-import com.pentaho.analyzer.util.StringUtil;
-
 /**
  * Encapsulate the logic for saving a Mondrian schema modified during inline modeling
- *
+ * <p/>
  * Created by pminutillo on 3/2/15.
  */
 public class MondrianAnnotationResult extends AnnotationResult {
@@ -69,12 +59,9 @@ public class MondrianAnnotationResult extends AnnotationResult {
   private static final String MONDRIAN_MIME = "application/vnd.pentaho.mondrian+xml";
   private static final String IMPORT_DOMAIN_ID = "domain-id";
 
-  private static ILocalizationService localizationService = AnalyzerLifecycleListener.getInstance()
-    .getAnalysisAreaManager().getLocalizationService();
-
   private IMondrianCatalogService mondrianCatalogService;
 
-  public MondrianAnnotationResult(){
+  public MondrianAnnotationResult() {
     super( type.MONDRIAN );
   }
 
@@ -87,23 +74,7 @@ public class MondrianAnnotationResult extends AnnotationResult {
    * @return
    */
   @Override public boolean save( String catalogName, String newCatalogName, boolean overwrite ) {
-    OlapMetaDataManager olapMetadataManager = AnalyzerLifecycleListener.getInstance().getOlapMetaDataManager();
-
-    OlapConnection oc = olapMetadataManager.getConnection( catalogName, this.getSchema() );
-
-    if ( !oc.isMondrian() ) {
-      throw new InlineModelingException( localizationService.getString( "errorModelingNonMondrianDataSource" ) );
-    }
-
     IPentahoSession pentahoSession = PentahoSessionHolder.getSession();
-
-    HelpGenerator helpGenerator = olapMetadataManager.getHelpGenerator( oc );
-    List<MondrianCube> cubes = new ArrayList<MondrianCube>();
-    for ( String cube : helpGenerator.getCubeNames() ) {
-      CubeHelp cubeHelp = helpGenerator.getCubeHelp( cube );
-      MondrianCube mCube = new MondrianCube( cubeHelp.getDisplayLabel(), cubeHelp.getFormula() );
-      cubes.add( mCube );
-    }
 
     String mondrianSchemaXml = this.getSchema();
 
@@ -113,7 +84,7 @@ public class MondrianAnnotationResult extends AnnotationResult {
       updateSchemaNodeName( mondrianSchemaDoc, newCatalogName );
       mondrianSchemaXml = ModelingUtil.xmlDocToString( mondrianSchemaDoc );
 
-      if( mondrianCatalogService == null ) {
+      if ( mondrianCatalogService == null ) {
         mondrianCatalogService =
           PentahoSystem.get( IMondrianCatalogService.class,
             "IMondrianCatalogService", pentahoSession ); //$NON-NLS-1$
@@ -123,14 +94,14 @@ public class MondrianAnnotationResult extends AnnotationResult {
 
       // create bundle
       IPlatformImportBundle mondrianBundle = new RepositoryFileImportBundle.Builder()
-        .input( IOUtils.toInputStream( mondrianSchemaXml, ENCODING ) )
-        .name( MONDRIAN_SCHEMA_NAME )
-        .charSet( ENCODING )
-        .overwriteFile( true )
-        .mime( MONDRIAN_MIME )
-        .withParam( IMPORT_DOMAIN_ID, newCatalogName )
-        .withParam( MONDRIAN_CONNECTION_PARAM, catalog.getDataSourceInfo() )
-        .build();
+          .input( IOUtils.toInputStream( mondrianSchemaXml, ENCODING ) )
+          .name( MONDRIAN_SCHEMA_NAME )
+          .charSet( ENCODING )
+          .overwriteFile( true )
+          .mime( MONDRIAN_MIME )
+          .withParam( IMPORT_DOMAIN_ID, newCatalogName )
+          .withParam( MONDRIAN_CONNECTION_PARAM, catalog.getDataSourceInfo() )
+          .build();
 
       // do import
       IPlatformImporter importer = PentahoSystem.get( IPlatformImporter.class );
@@ -141,9 +112,8 @@ public class MondrianAnnotationResult extends AnnotationResult {
       IPentahoSession session = PentahoSessionHolder.getSession();
       PentahoSystem.publish( session, MONDRIAN_PUBLISHER );
       logger.info( "Published Mondrian schema with catalogId='" + newCatalogName + "'." );
-    }
-    catch( Exception e ){
-      throw new InlineModelingException( e );
+    } catch ( Exception e ) {
+      throw new ModelingException( e );
     }
 
     return true;
@@ -168,17 +138,16 @@ public class MondrianAnnotationResult extends AnnotationResult {
   }
 
   /**
-   * Update the value of the name attribute of the schema node
-   * e.g. <schema name="xxxxxxxxx"></schema>
+   * Update the value of the name attribute of the schema node e.g. <schema name="xxxxxxxxx"></schema>
    *
    * @param schema
    * @return
    */
-  private Document updateSchemaNodeName( Document schema, String newSchemaName ){
+  private Document updateSchemaNodeName( Document schema, String newSchemaName ) {
     NodeList schemaElements = schema.getElementsByTagName( ModelingConstants.SCHEMA_TAG_NAME );
 
-    if( ( schemaElements == null ) ||
-      ( schemaElements.getLength() <= 0 ) ) {
+    if ( ( schemaElements == null )
+      || ( schemaElements.getLength() <= 0 ) ) {
       return null;
     }
 

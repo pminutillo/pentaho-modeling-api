@@ -20,7 +20,7 @@
  * explicitly covering such access.
  */
 
-package modeling;
+package com.pentaho.modeling;
 
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.platform.plugin.action.mondrian.catalog.IMondrianCatalogService;
